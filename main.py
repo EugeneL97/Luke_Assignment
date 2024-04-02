@@ -1,17 +1,10 @@
 import boto3 
+from credentials import get_aws_credentials
 
-dynamodb = boto3.resource('dynamodb')
+aws_access_key_id, aws_secret_access_key, region = get_aws_credentials()
 
-table = dynamodb.create_table(
-    TableName = 'users',
-    KeySchema = [
-        {
-            'AttributeName' : 'username',
-            'KeyType' : 'HASH'
-        },
-        {
-            'AttributeName' : 'last_name',
-            'KeyType' : 'RANGE'
-        }
-    ],
-)
+dynamodb = boto3.resource('dynamodb', region_name = region, aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+
+table = dynamodb.Table('test-table')
+
+print(table.creation_date_time)
