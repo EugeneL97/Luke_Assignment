@@ -1,0 +1,37 @@
+Resources:
+  MyApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: MyApi
+
+  PutMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: PUT
+      AuthorizationType: NONE
+      ResourceId: !GetAtt MyApiGateway.RootResourceId
+      RestApiId: !Ref MyApiGateway
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:905418169658:function:myPutFunction/invocations"
+
+  GetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ResourceId: !GetAtt MyApiGateway.RootResourceId
+      RestApiId: !Ref MyApiGateway
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:905418169658:function:myGetFunction/invocations"
+
+  MyApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - PutMethod
+      - GetMethod
+    Properties:
+      RestApiId: !Ref MyApiGateway
